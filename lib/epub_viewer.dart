@@ -27,7 +27,7 @@ class EpubViewer {
     EpubScrollDirection scrollDirection = EpubScrollDirection.ALLDIRECTIONS,
     bool allowSharing = false,
     bool enableTts = false,
-    bool textSelection = true,
+    bool textSelection = false,
     bool isRtl = false,
   }) async {
     Map<String, dynamic> agrs = {
