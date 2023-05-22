@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,8 +10,8 @@ part 'model/enum/epub_scroll_direction.dart';
 part 'model/epub_locator.dart';
 part 'utils/util.dart';
 
-class VocsyEpub {
-  static const MethodChannel _channel = const MethodChannel('vocsy_epub_viewer');
+class EpubViewer {
+  static const MethodChannel _channel = const MethodChannel('epub_viewer');
   static const EventChannel _pageChannel = const EventChannel('page');
 
   /// Configure Viewer's with available values
@@ -21,20 +20,25 @@ class VocsyEpub {
   /// scrollDirection uses the [EpubScrollDirection] enum
   /// allowSharing
   /// enableTts is an option to enable the inbuilt Text-to-Speech
-  static void setConfig(
-      {Color themeColor = Colors.blue,
-      String identifier = 'book',
-      bool nightMode = false,
-      EpubScrollDirection scrollDirection = EpubScrollDirection.ALLDIRECTIONS,
-      bool allowSharing = false,
-      bool enableTts = false}) async {
+  static void setConfig({
+    Color themeColor = Colors.blue,
+    String identifier = 'book',
+    bool nightMode = false,
+    EpubScrollDirection scrollDirection = EpubScrollDirection.ALLDIRECTIONS,
+    bool allowSharing = false,
+    bool enableTts = false,
+    bool textSelection = true,
+    bool isRtl = false,
+  }) async {
     Map<String, dynamic> agrs = {
       "identifier": identifier,
       "themeColor": Util.getHexFromColor(themeColor),
       "scrollDirection": Util.getDirection(scrollDirection),
       "allowSharing": allowSharing,
       'enableTts': enableTts,
-      'nightMode': nightMode
+      'nightMode': nightMode,
+      'textSelection': textSelection,
+      'isRtl': isRtl,
     };
     await _channel.invokeMethod('setConfig', agrs);
   }
@@ -48,11 +52,6 @@ class VocsyEpub {
     };
     _channel.invokeMethod('setChannel');
     await _channel.invokeMethod('open', agrs);
-  }
-
-  static void closeReader() async {
-    _channel.invokeMethod('setChannel');
-    await _channel.invokeMethod('close');
   }
 
   /// bookPath should be an asset file path.
